@@ -14,11 +14,12 @@ struct HomeScreenView: View {
         NavigationStack {
             List {
                 Section("List") {
-                    ForEach(taskListViewModel.tasks) { task in
+                    ForEach(taskListViewModel.isSearching ? taskListViewModel.filteredTasks : taskListViewModel.tasks) { task in
                         TaskRowView(task: task)
                     }
                 }
             }
+            .searchable(text: $taskListViewModel.searchText)
             .navigationTitle("App Title")
             .navigationBarItems(
                 trailing:
@@ -30,6 +31,7 @@ struct HomeScreenView: View {
                             .fontWeight(.bold)
                     })
             )
+            .onDisappear(perform: {taskListViewModel.searchText = ""})
         }
     }
 }

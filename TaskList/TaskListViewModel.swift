@@ -7,9 +7,11 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
-class TaskListViewModel: ObservableObject {
-    @Published var tasks: [Task] = []
+@MainActor
+final class TaskListViewModel: ObservableObject {
+    @Published private(set) var tasks: [Task] = []
     
     init() {
         loadTasks()
@@ -18,6 +20,7 @@ class TaskListViewModel: ObservableObject {
             Task(title: "Sample Title 2", description: "Sample description 2", date: .now),
             Task(title: "Sample Title 3", description: "Sample description 3", date: .now),
         ]
+        addSubscribers()
     }
     
     func addTask(task: Task) {
@@ -53,5 +56,36 @@ class TaskListViewModel: ObservableObject {
         if let encodedTasks = try? JSONEncoder().encode(tasks) {
             UserDefaults.standard.set(encodedTasks, forKey: "tasksInfo")
         }
+    }
+    
+    @Published var searchText: String = ""
+    private var cancellables = Set<AnyCancellable>()
+    @Published private(set) var filteredTasks: [Task] = []
+    
+    var isSearching: Bool {
+        !searchText.isEmpty
+    }
+    
+    private func addSubscribers() {
+        $searchText
+            .debounce(for: 0.3, scheduler: DispatchQueue.main)
+            .sink { [weak self] searchText in
+                self?.filterTask()
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func filterTask() {
+        guard !searchText.isEmpty else {
+            filteredTasks = []
+            return
+        }
+        
+        let search = searchText.lowercased()
+        filteredTasks = tasks.filter({ task in
+            let titleContainsSearch = task.title.lowercased().contains(search)
+            let descriptionContainsSearch = task.description.lowercased().contains(search)
+            return titleContainsSearch || descriptionContainsSearch
+        })
     }
 }
