@@ -18,23 +18,24 @@ struct Task: Identifiable, Hashable, Codable {
     let reminderHours: Int
     let reminderMinutes: Int
     
+    
     init() {
         self.id = UUID().uuidString
         self.title = ""
         self.description = ""
-        self.date = .now
+        self.date = Calendar.current.date(bySetting: .second, value: 0, of: .now) ?? .now
         self.isReminderOn = false
         self.remindImmediately = true
         self.reminderDays = 0
         self.reminderHours = 0
-        self.reminderMinutes = 5
+        self.reminderMinutes = 0
     }
     
     init(task: Task) {
         self.id = task.id
         self.title = task.title
         self.description = task.description
-        self.date = task.date
+        self.date = Calendar.current.date(bySetting: .second, value: 0, of: task.date) ?? task.date
         self.isReminderOn = task.isReminderOn
         self.remindImmediately = task.isReminderOn
         self.reminderDays = task.reminderDays
@@ -46,19 +47,19 @@ struct Task: Identifiable, Hashable, Codable {
         self.id = UUID().uuidString
         self.title = title
         self.description = description
-        self.date = date
+        self.date = Calendar.current.date(bySetting: .second, value: 0, of: date) ?? date
         self.isReminderOn = false
         self.remindImmediately = true
         self.reminderDays = 0
         self.reminderHours = 0
-        self.reminderMinutes = 5
+        self.reminderMinutes = 0
     }
     
     init(title: String, description: String, date: Date, isReminderOn: Bool, remindImmediately: Bool, reminderDays: Int, reminderHours: Int, reminderMinutes: Int) {
         self.id = UUID().uuidString
         self.title = title
         self.description = description
-        self.date = date
+        self.date = Calendar.current.date(bySetting: .second, value: 0, of: date) ?? date
         self.isReminderOn = isReminderOn
         self.remindImmediately = remindImmediately
         self.reminderDays = reminderDays
@@ -70,7 +71,7 @@ struct Task: Identifiable, Hashable, Codable {
         self.id = id
         self.title = title
         self.description = description
-        self.date = date
+        self.date = Calendar.current.date(bySetting: .second, value: 0, of: date) ?? date
         self.isReminderOn = isReminderOn
         self.remindImmediately = remindImmediately
         self.reminderDays = reminderDays

@@ -25,13 +25,16 @@ final class TaskListViewModel: ObservableObject {
     
     func addTask(task: Task) {
         tasks.append(task)
+        setNotification(task)
         filterTasks()
         saveTasks()
     }
     
     func updateTask(task: Task) {
         if let index = tasks.firstIndex(where: { $0.id == task.id }) {
+            removeNotification(tasks[index])
             tasks[index] = task
+            setNotification(task)
         }
         filterTasks()
         saveTasks()
@@ -39,11 +42,16 @@ final class TaskListViewModel: ObservableObject {
     
     func deleteTask(task: Task) {
         tasks.removeAll(where: {$0.id == task.id})
+        removeNotification(task)
         filterTasks()
         saveTasks()
     }
-    func deleteTask(index: IndexSet) {
-        tasks.remove(atOffsets: index)
+    func deleteTask(indexSet: IndexSet) {
+        guard let index = indexSet.first else {
+            return
+        }
+        removeNotification(tasks[index])
+        tasks.remove(at: index)
         filterTasks()
         saveTasks()
     }
@@ -91,5 +99,27 @@ final class TaskListViewModel: ObservableObject {
             let descriptionContainsSearch = task.description.lowercased().contains(search)
             return titleContainsSearch || descriptionContainsSearch
         })
+    }
+    
+    private var taskNotificationIdentifiers: [String : String] = [:]
+    
+    private func setNotification(_ task: Task) {
+        if !task.isReminderOn {
+            return
+        }
+        removeNotification(task)
+        
+        let totalSecondsToSubtract = TimeInterval(task.reminderDays * 24 * 60 * 60 + task.reminderHours * 3600 + task.reminderMinutes * 60)
+        let reminderDate = task.date.addingTimeInterval(-totalSecondsToSubtract)
+        
+        NotificationManager.instance.requestAuthorization()
+        let notificationIdentifier = NotificationManager.instance.scheduleNotification(taskTitle: task.title, taskDate: task.date, reminderDate: reminderDate)
+        
+        taskNotificationIdentifiers[task.id] = notificationIdentifier
+    }
+    
+    private func removeNotification(_ task: Task) {
+        NotificationManager.instance.deleteNotification(taskNotificationIdentifiers[task.id])
+        taskNotificationIdentifiers.removeValue(forKey: task.id)
     }
 }
