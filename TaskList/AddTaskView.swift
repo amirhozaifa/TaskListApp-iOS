@@ -101,7 +101,7 @@ struct AddTaskView: View {
 
 #Preview {
     NavigationStack {
-        AddTaskView(task: Task(title: "", description: "", date: .now), isViewOnly: true)
+        AddTaskView(task: Task(title: "", description: "", date: .now), isViewOnly: false)
     }
     .environmentObject(TaskListViewModel())
 }

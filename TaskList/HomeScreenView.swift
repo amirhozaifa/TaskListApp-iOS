@@ -12,15 +12,27 @@ struct HomeScreenView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                Section("List") {
-                    ForEach(taskListViewModel.isSearching ? taskListViewModel.filteredTasks : taskListViewModel.tasks) { task in
-                        TaskRowView(task: task)
+            Group {
+                if taskListViewModel.tasks.isEmpty {
+                    VStack {
+                        Image(systemName: "text.document")
+                            .font(.largeTitle)
+                        Text("No tasks here yet")
+                        
+                    }
+                    .foregroundColor(Color.secondary)
+                } else {
+                    List {
+                        Section("List") {
+                            ForEach(taskListViewModel.isSearching ? taskListViewModel.filteredTasks : taskListViewModel.tasks) { task in
+                                TaskRowView(task: task)
+                            }
+                        }
                     }
                 }
             }
             .searchable(text: $taskListViewModel.searchText)
-            .navigationTitle("App Title")
+            .navigationTitle("Tasks")
             .navigationBarItems(
                 trailing:
                     NavigationLink(
@@ -31,7 +43,6 @@ struct HomeScreenView: View {
                             .fontWeight(.bold)
                     })
             )
-            .onDisappear(perform: {taskListViewModel.searchText = ""})
         }
     }
 }

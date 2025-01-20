@@ -25,6 +25,7 @@ final class TaskListViewModel: ObservableObject {
     
     func addTask(task: Task) {
         tasks.append(task)
+        filterTasks()
         saveTasks()
     }
     
@@ -32,15 +33,18 @@ final class TaskListViewModel: ObservableObject {
         if let index = tasks.firstIndex(where: { $0.id == task.id }) {
             tasks[index] = task
         }
+        filterTasks()
         saveTasks()
     }
     
     func deleteTask(task: Task) {
         tasks.removeAll(where: {$0.id == task.id})
+        filterTasks()
         saveTasks()
     }
     func deleteTask(index: IndexSet) {
         tasks.remove(atOffsets: index)
+        filterTasks()
         saveTasks()
     }
     
@@ -70,12 +74,12 @@ final class TaskListViewModel: ObservableObject {
         $searchText
             .debounce(for: 0.3, scheduler: DispatchQueue.main)
             .sink { [weak self] searchText in
-                self?.filterTask()
+                self?.filterTasks()
             }
             .store(in: &cancellables)
     }
     
-    private func filterTask() {
+    private func filterTasks() {
         guard !searchText.isEmpty else {
             filteredTasks = []
             return
