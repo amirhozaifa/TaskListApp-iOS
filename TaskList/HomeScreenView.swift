@@ -37,7 +37,7 @@ struct HomeScreenView: View {
                 trailing:
                     NavigationLink(
                     destination: {
-                        AddTaskView(task: Task(title: "", description: "", date: .now), isViewOnly: false)
+                        AddTaskView(task: Task(), viewMode: false)
                     }, label: {
                         Image(systemName: "plus.circle")
                             .fontWeight(.bold)
@@ -57,7 +57,7 @@ struct TaskRowView: View {
         HStack {
             NavigationLink(
             destination: {
-                AddTaskView(task: task, isViewOnly: true)
+                AddTaskView(task: task, viewMode: true)
             }, label: {})
             .opacity(0)
             .overlay(content: {
@@ -69,7 +69,7 @@ struct TaskRowView: View {
             Menu {
                 NavigationLink(
                 destination: {
-                    AddTaskView(task: task, isViewOnly: false)
+                    AddTaskView(task: task, viewMode: false)
                 }, label: {
                     Text("Update")
                 })
