@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Task: Identifiable & Hashable {
+struct Task: Identifiable, Hashable, Codable {
     let id: String
     let title: String
     let description: String
