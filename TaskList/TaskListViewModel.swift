@@ -14,12 +14,12 @@ final class TaskListViewModel: ObservableObject {
     @Published private(set) var tasks: [Task] = []
     
     init() {
-        loadTasks()
         tasks = [
             Task(title: "Sample Title 1", description: "Sample description 1", date: .now),
             Task(title: "Sample Title 2", description: "Sample description 2", date: .now),
             Task(title: "Sample Title 3", description: "Sample description 3", date: .now),
         ]
+        loadTasks()
         addSubscribers()
     }
     

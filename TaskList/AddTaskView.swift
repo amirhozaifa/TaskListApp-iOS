@@ -139,7 +139,11 @@ struct AddTaskView: View {
                     presentationMode.wrappedValue.dismiss()
                 }
             }, label: {
-                Text("Cancel")
+                if viewMode {
+                    Text("Back")
+                } else {
+                    Text("Cancel")
+                }
             }),
             trailing:
                 Group {
