@@ -60,7 +60,7 @@ struct AddTaskView: View {
                         .datePickerStyle(CompactDatePickerStyle())
                         .disabled(true)
                 } else {
-                    DatePicker("Date", selection: $date)
+                    DatePicker("Date", selection: $date, in: .now...)
                         .datePickerStyle(GraphicalDatePickerStyle())
                 }
             }
