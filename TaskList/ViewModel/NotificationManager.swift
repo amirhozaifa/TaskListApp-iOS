@@ -47,7 +47,6 @@ class NotificationManager {
         content.title = taskTitle
         content.subtitle = subtitle
         content.sound = .default
-//        content.badge = 1
                 
         var dateComponents = DateComponents()
         dateComponents.year = Calendar.current.component(.year, from: reminderDate)

@@ -23,9 +23,31 @@ struct HomeScreenView: View {
                     .foregroundColor(Color.secondary)
                 } else {
                     List {
-                        Section("List") {
-                            ForEach(taskListViewModel.isSearching ? taskListViewModel.filteredTasks : taskListViewModel.tasks) { task in
-                                TaskRowView(task: task)
+                        let highPriorityTasks = filteredTasks(by: .high)
+                        let normalPriorityTasks = filteredTasks(by: .normal)
+                        let lowPriorityTasks = filteredTasks(by: .low)
+
+                        if !highPriorityTasks.isEmpty {
+                            Section("High Priority Tasks") {
+                                ForEach(highPriorityTasks) { task in
+                                    TaskRowView(task: task)
+                                }
+                            }
+                        }
+
+                        if !normalPriorityTasks.isEmpty {
+                            Section("Normal Priority Tasks") {
+                                ForEach(normalPriorityTasks) { task in
+                                    TaskRowView(task: task)
+                                }
+                            }
+                        }
+
+                        if !lowPriorityTasks.isEmpty {
+                            Section("Low Priority Tasks") {
+                                ForEach(lowPriorityTasks) { task in
+                                    TaskRowView(task: task)
+                                }
                             }
                         }
                     }
@@ -44,6 +66,11 @@ struct HomeScreenView: View {
                     })
             )
         }
+    }
+    
+    private func filteredTasks(by priority: Task.Priority) -> [Task] {
+        let tasks = taskListViewModel.isSearching ? taskListViewModel.filteredTasks : taskListViewModel.tasks
+        return tasks.filter { $0.priority == priority }
     }
 }
 

@@ -18,6 +18,7 @@ struct AddTaskView: View {
     @State var title: String = ""
     @State var description: String = ""
     @State var date: Date = Date()
+    @State var priority: Task.Priority
     @State var isReminderOn: Bool = false
     @State var remindImmediately: Bool = false
         
@@ -31,6 +32,7 @@ struct AddTaskView: View {
         self.title = task.title
         self.description = task.description
         self.date = task.date
+        self.priority = task.priority
         self.isReminderOn = task.isReminderOn
         self.remindImmediately = task.remindImmediately
         self.reminderDays = task.reminderDays
@@ -67,6 +69,20 @@ struct AddTaskView: View {
                 }
             }
             VStack {
+                Text("Priority")
+                    .font(.subheadline)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Picker(selection: $priority) {
+                    Text("High").tag(Task.Priority.high)
+                    Text("Normal").tag(Task.Priority.normal)
+                    Text("Low").tag(Task.Priority.low)
+                } label: {
+                }
+                .pickerStyle(.palette)
+                .disabled(viewMode)
+            }
+
+            VStack {
                 Toggle("Reminder", isOn: $isReminderOn)
                     .padding(.vertical, 5)
                     .disabled(viewMode)
@@ -80,6 +96,8 @@ struct AddTaskView: View {
                         if !remindImmediately {
                             VStack {
                                 Text("Time Before Reminder")
+                                    .font(.subheadline)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.top, 7)
                                 Picker("Days", selection: $reminderDays) {
                                     ForEach(0..<31) { days in
@@ -156,7 +174,7 @@ struct AddTaskView: View {
                             Text("Edit")
                         }
                     } else {
-                        let currentTaskData: Task = Task(id: task.id, title: title, description: description, date: date, isReminderOn: isReminderOn, remindImmediately: remindImmediately, reminderDays: reminderDays, reminderHours: reminderHours, reminderMinutes: reminderMinutes)
+                        let currentTaskData: Task = Task(id: task.id, title: title, description: description, date: date, priority: priority, isReminderOn: isReminderOn, remindImmediately: remindImmediately, reminderDays: reminderDays, reminderHours: reminderHours, reminderMinutes: reminderMinutes)
                         Button(action: {
                                 if task.title.isEmpty {
                                     taskListViewModel.addTask(task: currentTaskData)
@@ -183,6 +201,7 @@ struct AddTaskView: View {
         self.title = task.title
         self.description = task.description
         self.date = task.date
+        self.priority = task.priority
         self.isReminderOn = task.isReminderOn
         self.remindImmediately = task.remindImmediately
         self.reminderDays = task.reminderDays
