@@ -12,8 +12,9 @@ struct AddTaskView: View {
     @Environment(\.presentationMode) var presentationMode
     
     
-    var task: Task
+    @State var task: Task
     @State var viewMode: Bool
+    let isViewPage: Bool
     @State var title: String = ""
     @State var description: String = ""
     @State var date: Date = Date()
@@ -38,6 +39,7 @@ struct AddTaskView: View {
         
         self.task = task
         self.viewMode = viewMode
+        self.isViewPage = viewMode
     }
     
     var body: some View {
@@ -77,7 +79,8 @@ struct AddTaskView: View {
                         
                         if !remindImmediately {
                             VStack {
-                                Text("Before")
+                                Text("Time Before Reminder")
+                                    .padding(.top, 7)
                                 Picker("Days", selection: $reminderDays) {
                                     ForEach(0..<31) { days in
                                         Text("\(days)d").tag(days)
@@ -114,14 +117,27 @@ struct AddTaskView: View {
                     if (task.title.isEmpty) {
                         Text("New Task")
                     } else {
-                        Text("Update Task")
+                        Text("Edit Task")
                     }
+                } else {
+                    Text("Task")
                 }
             }
         })
         .navigationBarItems(
             leading: Button(action: {
-                presentationMode.wrappedValue.dismiss()
+                if isViewPage {
+                    if viewMode {
+                        presentationMode.wrappedValue.dismiss()
+                    } else {
+                        withAnimation {
+                            viewMode.toggle()
+                            setInfoFromTask()
+                        }
+                    }
+                } else {
+                    presentationMode.wrappedValue.dismiss()
+                }
             }, label: {
                 Text("Cancel")
             }),
@@ -143,7 +159,10 @@ struct AddTaskView: View {
                                 } else {
                                     taskListViewModel.updateTask(task: currentTaskData)
                                 }
-                                presentationMode.wrappedValue.dismiss()
+                                self.task = currentTaskData
+                                withAnimation {
+                                    viewMode.toggle()
+                                }
                             }, label: {
                                 Text("Save")
                             }
@@ -151,9 +170,20 @@ struct AddTaskView: View {
                         .disabled(title.isEmpty || Task.isEqual(currentTaskData, task))
                     }
                 }
-                    
         )
         .navigationBarBackButtonHidden()
+    }
+    
+    
+    private func setInfoFromTask() {
+        self.title = task.title
+        self.description = task.description
+        self.date = task.date
+        self.isReminderOn = task.isReminderOn
+        self.remindImmediately = task.remindImmediately
+        self.reminderDays = task.reminderDays
+        self.reminderHours = task.reminderHours
+        self.reminderMinutes = task.reminderMinutes
     }
 }
 

@@ -71,7 +71,7 @@ struct TaskRowView: View {
                 destination: {
                     AddTaskView(task: task, viewMode: false)
                 }, label: {
-                    Text("Update")
+                    Text("Edit")
                 })
                 Button("Delete") {
                     showAlert.toggle()
